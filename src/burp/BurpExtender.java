@@ -1,10 +1,7 @@
 package burp;
 
-public class BurpExtender implements IBurpExtender
-{
-    @Override
-    public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks)
-    {
-        // your extension code here
-    }
+import hvqzao.rewrite.TokenRewriteExtension;
+
+public class BurpExtender extends TokenRewriteExtension {
+    // see hvqzao.rewrite.TokenRewriteExtension
 }
