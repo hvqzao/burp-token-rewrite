@@ -6,6 +6,8 @@
 package hvqzao.rewrite;
 
 import javax.swing.JButton;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -20,6 +22,26 @@ public class TokenRewriteOptions extends javax.swing.JPanel {
         initComponents();
     }
 
+    public JButton getAddToken() {
+        return AddToken;
+    }
+
+    public JButton getEditToken() {
+        return EditToken;
+    }
+
+    public JButton getRemoveToken() {
+        return RemoveToken;
+    }
+
+    public JTable getTokensTable() {
+        return TokensTable;
+    }
+
+    public JSplitPane getTokensTableSplitPane() {
+        return TokensTableSplitPane;
+    }
+    
     public JButton getOptionsDefaults() {
         return OptionsDefaults;
     }
@@ -42,6 +64,13 @@ public class TokenRewriteOptions extends javax.swing.JPanel {
         OptionsDefaults = new javax.swing.JButton();
         OptionsTitle = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        TokensTableSplitPane = new javax.swing.JSplitPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TokensTable = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        AddToken = new javax.swing.JButton();
+        EditToken = new javax.swing.JButton();
+        RemoveToken = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -59,6 +88,42 @@ public class TokenRewriteOptions extends javax.swing.JPanel {
 
         jLabel1.setText("<html>This extension allows you to get arbitrary value from responses and inject them into future requests. Those can be CSRF tokens, one-time codes etc.</html>");
 
+        TokensTableSplitPane.setDividerLocation(184);
+
+        TokensTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(TokensTable);
+
+        TokensTableSplitPane.setLeftComponent(jScrollPane1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 229, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 120, Short.MAX_VALUE)
+        );
+
+        TokensTableSplitPane.setRightComponent(jPanel1);
+
+        AddToken.setText("Add");
+
+        EditToken.setText("Edit");
+
+        RemoveToken.setText("Remove");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -74,7 +139,16 @@ public class TokenRewriteOptions extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(OptionsDefaults, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(EditToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(RemoveToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(AddToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TokensTableSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(12, 12, 12))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -90,15 +164,31 @@ public class TokenRewriteOptions extends javax.swing.JPanel {
                         .addComponent(OptionsTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(215, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(AddToken)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(EditToken)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(RemoveToken))
+                    .addComponent(TokensTableSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddToken;
+    private javax.swing.JButton EditToken;
     private javax.swing.JButton OptionsDefaults;
     private javax.swing.JButton OptionsHelp;
     private javax.swing.JLabel OptionsTitle;
+    private javax.swing.JButton RemoveToken;
+    private javax.swing.JTable TokensTable;
+    private javax.swing.JSplitPane TokensTableSplitPane;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
