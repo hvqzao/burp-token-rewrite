@@ -5,6 +5,7 @@
  */
 package hvqzao.rewrite;
 
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
 /**
@@ -22,6 +23,14 @@ public class TokenRewriteDialogWrapper extends javax.swing.JPanel {
 
     public JScrollPane getScrollPane() {
         return scrollPane;
+    }
+
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
+    public JButton getOkButton() {
+        return okButton;
     }
 
     /**

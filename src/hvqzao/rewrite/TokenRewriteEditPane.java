@@ -60,10 +60,22 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
         return logGet;
     }
 
-    
-    
-    
-    
+    public JTextField getCookieName() {
+        return cookieName;
+    }
+
+    public JCheckBox getIsCookie() {
+        return isCookie;
+    }
+
+    public JCheckBox getIsRequestParameter() {
+        return isRequestParameter;
+    }
+
+    public JTextField getRequestParameter() {
+        return requestParameter;
+    }
+
     public JCheckBox getLogSet() {
         return logSet;
     }

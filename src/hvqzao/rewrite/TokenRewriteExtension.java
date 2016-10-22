@@ -8,6 +8,7 @@ import burp.ITab;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,6 +21,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 public class TokenRewriteExtension implements IBurpExtender, ITab {
 
@@ -29,6 +32,8 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
     private JFrame burpFrame;
     private TokenRewriteOptions optionsPane;
     private ImageIcon iconHelp;
+    private final ArrayList<TokenEntry> token = new ArrayList<>();
+    private TokenTableModel tokenTableModel;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -55,6 +60,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             //
             JButton optionsDefaults = optionsPane.getOptionsDefaults();
             optionsDefaults.setIcon(iconDefaults);
+            optionsDefaults.setEnabled(false);
             callbacks.customizeUiComponent(optionsDefaults);
             //
             JButton optionsAddToken = optionsPane.getAddToken();
@@ -73,7 +79,22 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             callbacks.customizeUiComponent(optionsTokensTableSplitPane);
             //
             JTable optionsTokensTable = optionsPane.getTokensTable();
+
+            // table
+            tokenTableModel = new TokenTableModel();
+            //tokenTableSorter = new TableRowSorter<>(tokenTableModel);
+            optionsTokensTable.setModel(tokenTableModel);
+            // optionsTokensTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            // optionsTokensTable.getTableHeader().setReorderingAllowed(true);
+            optionsTokensTable.setAutoCreateRowSorter(true);
+            //optionsTokensTable.setRowSorter(tokenTableSorter);
+            for (int i = 0; i < tokenTableModel.getColumnCount(); i++) {
+                TableColumn column = optionsTokensTable.getColumnModel().getColumn(i);
+                column.setMinWidth(20);
+                column.setPreferredWidth(tokenTableModel.getPreferredWidth(i));
+            }
             callbacks.customizeUiComponent(optionsTokensTable);
+
             //
             optionsTab = new JScrollPane(optionsPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             callbacks.customizeUiComponent(optionsTab);
@@ -84,7 +105,15 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             // get burp frame and tabbed pane handler
             burpFrame = (JFrame) SwingUtilities.getWindowAncestor(optionsTab);
             // ...
+            //
 
+            int row = token.size();
+            token.add(new TokenEntry());
+            token.add(new TokenEntry());
+            token.add(new TokenEntry());
+            tokenTableModel.fireTableRowsInserted(row, row);
+            //
+            //callbacks.printOutput("Loaded.");
         });
     }
 
@@ -135,7 +164,16 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         JCheckBox logGet = editPane.getLogGet();
         callbacks.customizeUiComponent(logGet);
         //
-
+        JCheckBox isRequestParameter = editPane.getIsRequestParameter();
+        callbacks.customizeUiComponent(isRequestParameter);
+        //
+        JTextField requestParameter = editPane.getRequestParameter();
+        callbacks.customizeUiComponent(requestParameter);
+        //
+        JCheckBox isCookie = editPane.getIsCookie();
+        callbacks.customizeUiComponent(isCookie);
+        //
+        JTextField cookieName = editPane.getCookieName();
         //
         JCheckBox logSet = editPane.getLogSet();
         callbacks.customizeUiComponent(logSet);
@@ -147,7 +185,136 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         dialog.setContentPane(wrapper);
         //dialog.setLocationRelativeTo(burpFrame);
         //dialog.setLocationRelativeTo(optionsPane.getOptionsRewritePanel());
+        //
+        JButton ok = wrapper.getOkButton();
+        callbacks.customizeUiComponent(ok);
+        //
+        JButton cancel = wrapper.getCancelButton();
+        callbacks.customizeUiComponent(cancel);
+        cancel.addActionListener((e) -> {
+            dialog.dispose();
+        });
+        
+        //
         dialog.setLocationRelativeTo(optionsTab);
         dialog.setVisible(true);
     }
+
+    //
+    class TokenTableModel extends AbstractTableModel {
+
+        @Override
+        public int getRowCount() {
+            return token.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 5;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            TokenEntry tokenEntry = token.get(rowIndex);
+            switch (columnIndex) {
+                case 0:
+                    return tokenEntry.isEnabled();
+                case 1:
+                    return true;
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            TokenEntry tokenEntry = token.get(rowIndex);
+            tokenEntry.setEnabled((boolean) aValue);
+            fireTableCellUpdated(rowIndex, columnIndex);
+        }
+
+        
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return "Enabled";
+                case 1:
+                    return "Scope";
+                case 2:
+                    return "Parameter";
+                case 3:
+                    return "Cookie";
+                case 4:
+                    return "Search";
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return Boolean.class;
+                case 1:
+                    return Boolean.class;
+                default:
+                    return String.class;
+            }
+        }
+
+        public int getPreferredWidth(int column) {
+            switch (column) {
+                case 0:
+                    return 60;
+                case 1:
+                    return 60;
+                case 2:
+                    return 80;
+                case 3:
+                    return 80;
+                case 4:
+                    return 140;
+                default:
+                    return 60;
+            }
+        }
+
+    }
+
+    //
+    class TokenEntry {
+
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+        
+    }
+
+    //
+    //class TokenTable extends JTable {
+    //
+    //    public TokenTable(TableModel tableModel) {
+    //        super(tableModel);
+    //    }
+    //
+    //
+    //}
 }
