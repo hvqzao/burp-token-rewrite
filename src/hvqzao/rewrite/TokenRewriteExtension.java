@@ -10,11 +10,14 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
@@ -24,6 +27,8 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
     private static IExtensionHelpers helpers;
     private JScrollPane optionsTab;
     private JFrame burpFrame;
+    private TokenRewriteOptions optionsPane;
+    private ImageIcon iconHelp;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -36,11 +41,11 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         // draw UI
         SwingUtilities.invokeLater(() -> {
             // images
-            ImageIcon iconHelp = new ImageIcon(new ImageIcon(getClass().getResource("/hvqzao/rewrite/resources/panel_help.png")).getImage().getScaledInstance(13, 13, java.awt.Image.SCALE_SMOOTH));
+            iconHelp = new ImageIcon(new ImageIcon(getClass().getResource("/hvqzao/rewrite/resources/panel_help.png")).getImage().getScaledInstance(13, 13, java.awt.Image.SCALE_SMOOTH));
             ImageIcon iconDefaults = new ImageIcon(new ImageIcon(getClass().getResource("/hvqzao/rewrite/resources/panel_defaults.png")).getImage().getScaledInstance(13, 13, java.awt.Image.SCALE_SMOOTH));
             Dimension iconDimension = new Dimension(24, 24);
             // extension tab
-            TokenRewriteOptions optionsPane = new TokenRewriteOptions();
+            optionsPane = new TokenRewriteOptions();
             callbacks.customizeUiComponent(optionsPane);
             //
             JButton optionsHelp = optionsPane.getOptionsHelp();
@@ -103,11 +108,46 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         JDialog dialog = new JDialog(burpFrame, title, Dialog.ModalityType.DOCUMENT_MODAL);
         TokenRewriteDialogWrapper wrapper = new TokenRewriteDialogWrapper();
         TokenRewriteEditPane editPane = new TokenRewriteEditPane();
-        //editPane.setBounds(100, 100, 450, 400);
+        // customize edit pane
+        JButton editHelp = editPane.getEditHelp();
+        editHelp.setIcon(iconHelp);
+        editHelp.setEnabled(false);
+        callbacks.customizeUiComponent(editHelp);
+        //
+        JCheckBox isInScope = editPane.getIsInScope();
+        callbacks.customizeUiComponent(isInScope);
+        //
+        JRadioButton isLiteral = editPane.getIsLiteral();
+        callbacks.customizeUiComponent(isLiteral);
+        //
+        JTextField startWith = editPane.getStartWith();
+        callbacks.customizeUiComponent(startWith);
+        //
+        JTextField endsWith = editPane.getEndsWith();
+        callbacks.customizeUiComponent(endsWith);
+        //
+        JRadioButton isRegex = editPane.getIsRegex();
+        callbacks.customizeUiComponent(isRegex);
+        //
+        JTextField regexMatch = editPane.getRegexMatch();
+        callbacks.customizeUiComponent(regexMatch);
+        //
+        JCheckBox logGet = editPane.getLogGet();
+        callbacks.customizeUiComponent(logGet);
+        //
+
+        //
+        JCheckBox logSet = editPane.getLogSet();
+        callbacks.customizeUiComponent(logSet);
+        //
+        isLiteral.requestFocus();
+        // wrap editPane
         wrapper.getScrollPane().getViewport().add(editPane);
-        dialog.setBounds(100, 100, 450, 400);
+        dialog.setBounds(100, 100, 470, 470);
         dialog.setContentPane(wrapper);
-        dialog.setLocationRelativeTo(burpFrame);
+        //dialog.setLocationRelativeTo(burpFrame);
+        //dialog.setLocationRelativeTo(optionsPane.getOptionsRewritePanel());
+        dialog.setLocationRelativeTo(optionsTab);
         dialog.setVisible(true);
     }
 }
