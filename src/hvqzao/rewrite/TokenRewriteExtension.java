@@ -4,6 +4,10 @@ package hvqzao.rewrite;
 import burp.IBurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
+import burp.IHttpListener;
+import burp.IHttpRequestResponse;
+import burp.IHttpService;
+import burp.IRequestInfo;
 import burp.ITab;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -26,7 +30,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-public class TokenRewriteExtension implements IBurpExtender, ITab {
+public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener {
 
     private static IBurpExtenderCallbacks callbacks;
     private static IExtensionHelpers helpers;
@@ -155,8 +159,83 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
     }
 
     //
+    // implement IHttpListener
+    //
+    @Override
+    public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
+        token.stream().filter(t -> t.isEnabled()).forEach((TokenEntry t) -> {
+            //
+            IHttpService httpService = messageInfo.getHttpService();
+            IRequestInfo requestInfo = helpers.analyzeRequest(messageInfo);
+            if (t.isInScope() == false || callbacks.isInScope(requestInfo.getUrl())) {
+                if (messageIsRequest == false && tokenEntrySearchDefined(t)) {
+                    // response
+                    byte[] response = messageInfo.getResponse();
+                    //IResponseInfo responseInfo = helpers.analyzeResponse(response);
+                    String responseString = helpers.bytesToString(response);
+                    boolean found = false;
+                    if (t.isLiteral()) {
+                        // literal search
+                        final String START = t.getStartWith();
+                        int start = responseString.indexOf(START);
+                        if (start > -1) {
+                            start += START.length();
+                            final String END = t.getEndsWith();
+                            int length = responseString.substring(start).indexOf(END);
+                            if (length > -1) {
+                                t.setValue(responseString.substring(start, start + length));
+                                found = true;
+                            }
+                        }
+                    } else {
+                        // regex search
+
+                    }
+                    if (found) {
+                        if (t.getLogGet()) {
+                            // log get
+                            callbacks.printOutput("Got value for " + tokenSearch(t) + ": " + t.getValue());
+                        }
+                        if (t.isUpdateCookie()) {
+                            // set cookie
+
+                            if (t.getLogSet()) {
+                                // log set cookie
+
+                            }
+                        }
+                    }
+                } else if (t.getValue() != null && t.isUpdateParam()) {
+                    // request
+
+                    {
+
+                        if (t.getLogSet()) {
+                            // log set parameter
+
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    //
     // TODO misc
     //
+    private boolean tokenEntrySearchDefined(TokenEntry tokenEntry) {
+        return ((tokenEntry.isLiteral() && (tokenEntry.getStartWith().length() == 0 || tokenEntry.getEndsWith().length() == 0))
+                || (tokenEntry.isLiteral() == false && tokenEntry.getRegexMatch().length() == 0));
+    }
+
+    private String tokenSearch(TokenEntry tokenEntry) {
+        if (tokenEntrySearchDefined(tokenEntry)) {
+            return "Undefined";
+        } else {
+            return tokenEntry.isLiteral() ? tokenEntry.getStartWith() + "[...]" + tokenEntry.getEndsWith() : tokenEntry.getRegexMatch();
+        }
+    }
+
     private boolean showTokenDialog(String title, TokenEntry tokenEntry) {
         JDialog dialog = new JDialog(burpFrame, title, Dialog.ModalityType.DOCUMENT_MODAL);
         TokenRewriteDialogWrapper wrapper = new TokenRewriteDialogWrapper();
@@ -292,11 +371,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
                 case 3:
                     return tokenEntry.cookieName;
                 case 4:
-                    if (tokenEntry.isLiteral() && tokenEntry.getStartWith().length() == 0 && tokenEntry.getEndsWith().length() == 0) {
-                        return "";
-                    } else {
-                        return tokenEntry.isLiteral() ? tokenEntry.getStartWith() + "[...]" + tokenEntry.getEndsWith() : tokenEntry.getRegexMatch();
-                    }
+                    return tokenSearch(tokenEntry);
                 default:
                     return "";
             }
@@ -383,6 +458,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         private boolean updateCookie = false;
         private String cookieName = "";
         private boolean logSet = false;
+        private String value = null;
 
         public boolean isEnabled() {
             return enabled;
@@ -478,6 +554,14 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
 
         public void setLogSet(boolean logSet) {
             this.logSet = logSet;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
     }
 }
