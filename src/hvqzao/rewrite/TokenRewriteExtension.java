@@ -122,18 +122,20 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             callbacks.customizeUiComponent(optionsTab);
             optionsTab.setFocusable(false);
             //optionsPane.requestFocus();
+            //
+            optionsTokensTableSplitPane.setDividerSize(10);
+            //optionsTokensTableSplitPane.setContinuousLayout(true);
+            optionsTokensTableSplitPane.setUI(new GlyphSplitPaneUI(optionsPane.getBackground())); // each need separate instance
             // add the custom tab to Burp's UI
             callbacks.addSuiteTab(TokenRewriteExtension.this);
             // get burp frame and tabbed pane handler
             burpFrame = (JFrame) SwingUtilities.getWindowAncestor(optionsTab);
-            // ...
             //
-
-            int row = token.size();
-            token.add(new TokenEntry());
-            token.add(new TokenEntry());
-            token.add(new TokenEntry());
-            tokenTableModel.fireTableRowsInserted(row, row);
+            //int row = token.size();
+            //token.add(new TokenEntry());
+            //token.add(new TokenEntry());
+            //token.add(new TokenEntry());
+            //tokenTableModel.fireTableRowsInserted(row, row);
             //
             //callbacks.printOutput("Loaded.");
         });
@@ -293,7 +295,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
                     if (tokenEntry.isLiteral() && tokenEntry.getStartWith().length() == 0 && tokenEntry.getEndsWith().length() == 0) {
                         return "";
                     } else {
-                        return tokenEntry.isLiteral() ? tokenEntry.getStartWith()+"[...]"+tokenEntry.getEndsWith() : tokenEntry.getRegexMatch();
+                        return tokenEntry.isLiteral() ? tokenEntry.getStartWith() + "[...]" + tokenEntry.getEndsWith() : tokenEntry.getRegexMatch();
                     }
                 default:
                     return "";
@@ -350,9 +352,9 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         public int getPreferredWidth(int column) {
             switch (column) {
                 case 0:
-                    return 60;
+                    return 80;
                 case 1:
-                    return 60;
+                    return 80;
                 case 2:
                     return 80;
                 case 3:
@@ -360,7 +362,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
                 case 4:
                     return 140;
                 default:
-                    return 60;
+                    return 80;
             }
         }
 
@@ -478,5 +480,4 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             this.logSet = logSet;
         }
     }
-
 }
