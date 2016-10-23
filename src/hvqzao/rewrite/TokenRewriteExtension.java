@@ -8,12 +8,14 @@ import burp.ITab;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -34,6 +36,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
     private ImageIcon iconHelp;
     private final ArrayList<TokenEntry> token = new ArrayList<>();
     private TokenTableModel tokenTableModel;
+    private TokenEntry modalResult;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -63,38 +66,57 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             optionsDefaults.setEnabled(false);
             callbacks.customizeUiComponent(optionsDefaults);
             //
+            JSplitPane optionsTokensTableSplitPane = optionsPane.getTokensTableSplitPane();
+            callbacks.customizeUiComponent(optionsTokensTableSplitPane);
+            //
+            JTable tokenTable = optionsPane.getTokensTable();
+            // table
+            tokenTableModel = new TokenTableModel();
+            //tokenTableSorter = new TableRowSorter<>(tokenTableModel);
+            tokenTable.setModel(tokenTableModel);
+            // optionsTokensTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            // optionsTokensTable.getTableHeader().setReorderingAllowed(true);
+            tokenTable.setAutoCreateRowSorter(true);
+            //optionsTokensTable.setRowSorter(tokenTableSorter);
+            for (int i = 0; i < tokenTableModel.getColumnCount(); i++) {
+                TableColumn column = tokenTable.getColumnModel().getColumn(i);
+                column.setMinWidth(20);
+                column.setPreferredWidth(tokenTableModel.getPreferredWidth(i));
+            }
+            callbacks.customizeUiComponent(tokenTable);
+            //
             JButton optionsAddToken = optionsPane.getAddToken();
             callbacks.customizeUiComponent(optionsAddToken);
             optionsAddToken.addActionListener((e) -> {
-                showTokenDialog("Add Token");
+                if (showTokenDialog("Add Token", null)) {
+                    int row = token.size();
+                    token.add(modalResult);
+                    tokenTableModel.fireTableRowsInserted(row, row);
+                }
             });
             //
             JButton optionsEditToken = optionsPane.getEditToken();
             callbacks.customizeUiComponent(optionsEditToken);
+            optionsEditToken.addActionListener((e) -> {
+                TokenEntry tokenEntry = token.get(tokenTable.convertRowIndexToModel(tokenTable.getSelectedRow()));
+                if (showTokenDialog("Edit Token", tokenEntry)) {
+                    int row = tokenTable.getSelectedRow();
+                    tokenTableModel.fireTableRowsUpdated(row, row);
+                }
+            });
             //
             JButton optionsRemoveToken = optionsPane.getRemoveToken();
             callbacks.customizeUiComponent(optionsRemoveToken);
-            //
-            JSplitPane optionsTokensTableSplitPane = optionsPane.getTokensTableSplitPane();
-            callbacks.customizeUiComponent(optionsTokensTableSplitPane);
-            //
-            JTable optionsTokensTable = optionsPane.getTokensTable();
-
-            // table
-            tokenTableModel = new TokenTableModel();
-            //tokenTableSorter = new TableRowSorter<>(tokenTableModel);
-            optionsTokensTable.setModel(tokenTableModel);
-            // optionsTokensTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            // optionsTokensTable.getTableHeader().setReorderingAllowed(true);
-            optionsTokensTable.setAutoCreateRowSorter(true);
-            //optionsTokensTable.setRowSorter(tokenTableSorter);
-            for (int i = 0; i < tokenTableModel.getColumnCount(); i++) {
-                TableColumn column = optionsTokensTable.getColumnModel().getColumn(i);
-                column.setMinWidth(20);
-                column.setPreferredWidth(tokenTableModel.getPreferredWidth(i));
-            }
-            callbacks.customizeUiComponent(optionsTokensTable);
-
+            optionsRemoveToken.addActionListener((e) -> {
+                TokenEntry tokenEntry = token.get(tokenTable.convertRowIndexToModel(tokenTable.getSelectedRow()));
+                int dialogResult = JOptionPane.showConfirmDialog(optionsPane, "Are you sure you want to remove it?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    int index = tokenTable.convertRowIndexToModel(tokenTable.getSelectedRow());
+                    token.remove(index);
+                    int row = token.size();
+                    tokenTableModel.fireTableRowsDeleted(row, row);
+                }
+            });
             //
             optionsTab = new JScrollPane(optionsPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             callbacks.customizeUiComponent(optionsTab);
@@ -133,7 +155,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
     //
     // TODO misc
     //
-    private void showTokenDialog(String title) {
+    private boolean showTokenDialog(String title, TokenEntry tokenEntry) {
         JDialog dialog = new JDialog(burpFrame, title, Dialog.ModalityType.DOCUMENT_MODAL);
         TokenRewriteDialogWrapper wrapper = new TokenRewriteDialogWrapper();
         TokenRewriteEditPane editPane = new TokenRewriteEditPane();
@@ -186,18 +208,60 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         //dialog.setLocationRelativeTo(burpFrame);
         //dialog.setLocationRelativeTo(optionsPane.getOptionsRewritePanel());
         //
+        if (tokenEntry != null) {
+            isInScope.setSelected(tokenEntry.isInScope());
+            if (tokenEntry.isLiteral()) {
+                isLiteral.setSelected(true);
+            } else {
+                isRegex.setSelected(true);
+            }
+            startWith.setText(tokenEntry.getStartWith());
+            endsWith.setText(tokenEntry.getEndsWith());
+            regexMatch.setText(tokenEntry.getRegexMatch());
+            logGet.setSelected(tokenEntry.getLogGet());
+            isRequestParameter.setSelected(tokenEntry.isUpdateParam());
+            requestParameter.setText(tokenEntry.getParamName());
+            isCookie.setSelected(tokenEntry.isUpdateCookie());
+            cookieName.setText(tokenEntry.getCookieName());
+            logSet.setSelected(tokenEntry.getLogSet());
+        }
+
+        //
+        modalResult = null;
+        //
         JButton ok = wrapper.getOkButton();
         callbacks.customizeUiComponent(ok);
+        ok.addActionListener((ActionEvent e) -> {
+            modalResult = tokenEntry;
+            if (modalResult == null) {
+                modalResult = new TokenEntry();
+            }
+            modalResult.setInScope(isInScope.isSelected());
+            modalResult.setLiteral(isLiteral.isSelected());
+            modalResult.setStartWith(startWith.getText());
+            modalResult.setEndsWith(endsWith.getText());
+            modalResult.setRegexMatch(regexMatch.getText());
+            modalResult.setLogGet(logGet.isSelected());
+            modalResult.setUpdateParam(isRequestParameter.isSelected());
+            modalResult.setParamName(requestParameter.getText());
+            modalResult.setUpdateCookie(isCookie.isSelected());
+            modalResult.setCookieName(cookieName.getText());
+            modalResult.setLogSet(logSet.isSelected());
+            //
+            dialog.dispose();
+        });
         //
         JButton cancel = wrapper.getCancelButton();
         callbacks.customizeUiComponent(cancel);
         cancel.addActionListener((e) -> {
             dialog.dispose();
         });
-        
         //
         dialog.setLocationRelativeTo(optionsTab);
         dialog.setVisible(true);
+        //
+
+        return modalResult != null;
     }
 
     //
@@ -220,7 +284,17 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
                 case 0:
                     return tokenEntry.isEnabled();
                 case 1:
-                    return true;
+                    return tokenEntry.isInScope();
+                case 2:
+                    return tokenEntry.paramName;
+                case 3:
+                    return tokenEntry.cookieName;
+                case 4:
+                    if (tokenEntry.isLiteral() && tokenEntry.getStartWith().length() == 0 && tokenEntry.getEndsWith().length() == 0) {
+                        return "";
+                    } else {
+                        return tokenEntry.isLiteral() ? tokenEntry.getStartWith()+"[...]"+tokenEntry.getEndsWith() : tokenEntry.getRegexMatch();
+                    }
                 default:
                     return "";
             }
@@ -243,7 +317,6 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
             fireTableCellUpdated(rowIndex, columnIndex);
         }
 
-        
         @Override
         public String getColumnName(int column) {
             switch (column) {
@@ -297,6 +370,17 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
     class TokenEntry {
 
         private boolean enabled = true;
+        private boolean inScope = false;
+        private boolean literal = true;
+        private String startWith = "";
+        private String endsWith = "";
+        private String regexMatch = "";
+        private boolean logGet = false;
+        private boolean updateParam = false;
+        private String paramName = "";
+        private boolean updateCookie = false;
+        private String cookieName = "";
+        private boolean logSet = false;
 
         public boolean isEnabled() {
             return enabled;
@@ -305,16 +389,94 @@ public class TokenRewriteExtension implements IBurpExtender, ITab {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
-        
+
+        public boolean isInScope() {
+            return inScope;
+        }
+
+        public void setInScope(boolean inScope) {
+            this.inScope = inScope;
+        }
+
+        public boolean isLiteral() {
+            return literal;
+        }
+
+        public void setLiteral(boolean literal) {
+            this.literal = literal;
+        }
+
+        public String getStartWith() {
+            return startWith;
+        }
+
+        public void setStartWith(String startWith) {
+            this.startWith = startWith;
+        }
+
+        public String getEndsWith() {
+            return endsWith;
+        }
+
+        public void setEndsWith(String endsWith) {
+            this.endsWith = endsWith;
+        }
+
+        public String getRegexMatch() {
+            return regexMatch;
+        }
+
+        public void setRegexMatch(String regexMatch) {
+            this.regexMatch = regexMatch;
+        }
+
+        public boolean getLogGet() {
+            return logGet;
+        }
+
+        public void setLogGet(boolean logGet) {
+            this.logGet = logGet;
+        }
+
+        public boolean isUpdateParam() {
+            return updateParam;
+        }
+
+        public void setUpdateParam(boolean updateParam) {
+            this.updateParam = updateParam;
+        }
+
+        public String getParamName() {
+            return paramName;
+        }
+
+        public void setParamName(String paramName) {
+            this.paramName = paramName;
+        }
+
+        public boolean isUpdateCookie() {
+            return updateCookie;
+        }
+
+        public void setUpdateCookie(boolean updateCookie) {
+            this.updateCookie = updateCookie;
+        }
+
+        public String getCookieName() {
+            return cookieName;
+        }
+
+        public void setCookieName(String cookieName) {
+            this.cookieName = cookieName;
+        }
+
+        public boolean getLogSet() {
+            return logSet;
+        }
+
+        public void setLogSet(boolean logSet) {
+            this.logSet = logSet;
+        }
     }
 
-    //
-    //class TokenTable extends JTable {
-    //
-    //    public TokenTable(TableModel tableModel) {
-    //        super(tableModel);
-    //    }
-    //
-    //
-    //}
 }
