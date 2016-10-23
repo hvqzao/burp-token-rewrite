@@ -3,17 +3,23 @@ package hvqzao.rewrite;
 
 import burp.IBurpExtender;
 import burp.IBurpExtenderCallbacks;
+import burp.ICookie;
 import burp.IExtensionHelpers;
 import burp.IHttpListener;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
+import burp.IParameter;
 import burp.IRequestInfo;
 import burp.ITab;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,6 +47,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
     private final ArrayList<TokenEntry> token = new ArrayList<>();
     private TokenTableModel tokenTableModel;
     private TokenEntry modalResult;
+    private PrintWriter stderr;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -48,6 +55,8 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
         TokenRewriteExtension.callbacks = callbacks;
         // obtain an extension helpers object
         helpers = callbacks.getHelpers();
+        // stderr
+        stderr = new PrintWriter(callbacks.getStderr(), true);
         // set extension name
         callbacks.setExtensionName("Token Rewrite");
         // draw UI
@@ -189,30 +198,74 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
                         }
                     } else {
                         // regex search
-
+                        Pattern p = t.getRegexPattern();
+                        if (p == null) {
+                            p = Pattern.compile(t.getRegexMatch());
+                            t.setRegexPattern(p);
+                        }
+                        Matcher m = p.matcher(responseString);
+                        if (m.find()) {
+                            t.setValue(m.group(1));
+                            found = true;
+                        }
                     }
                     if (found) {
                         if (t.getLogGet()) {
                             // log get
-                            callbacks.printOutput("Got value for " + tokenSearch(t) + ": " + t.getValue());
+                            callbacks.printOutput("Got value for " + tokenSearch(t) + ": \"" + t.getValue() + "\"");
                         }
                         if (t.isUpdateCookie()) {
-                            // set cookie
+                            // create cookie and add it to cookie jar
+                            callbacks.updateCookieJar(new ICookie() {
+                                @Override
+                                public String getDomain() {
+                                    return httpService.getHost();
+                                }
 
+                                @Override
+                                public String getPath() {
+                                    return null;
+                                }
+
+                                @Override
+                                public Date getExpiration() {
+                                    return null;
+                                }
+
+                                @Override
+                                public String getName() {
+                                    return t.getCookieName();
+                                }
+
+                                @Override
+                                public String getValue() {
+                                    return t.getValue();
+                                }
+                            });
                             if (t.getLogSet()) {
                                 // log set cookie
-
+                                callbacks.printOutput("Cookie " + t.getCookieName() + " set to: \"" + t.getValue() + "\"");
                             }
                         }
                     }
                 } else if (t.getValue() != null && t.isUpdateParam()) {
                     // request
-
-                    {
-
+                    byte[] origRequest = messageInfo.getRequest();
+                    //String requestString = helpers.bytesToString(request);
+                    final String KEY = t.getParamName();
+                    final String VALUE = t.getValue();
+                    IParameter origParameter = helpers.getRequestParameter(origRequest, KEY);
+                    if (origParameter != null) {
+                        IParameter newParameter = helpers.buildParameter(KEY, VALUE, origParameter.getType());
+                        try {
+                            byte[] newRequest = helpers.updateParameter(origRequest, newParameter);
+                            messageInfo.setRequest(newRequest);
+                        } catch (Exception e) {
+                            e.printStackTrace(stderr);
+                        }
                         if (t.getLogSet()) {
                             // log set parameter
-
+                            callbacks.printOutput("Parameter " + KEY + " set to: \"" + VALUE + "\"");
                         }
                     }
                 }
@@ -221,7 +274,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
     }
 
     //
-    // TODO misc
+    // misc
     //
     private boolean tokenEntrySearchDefined(TokenEntry tokenEntry) {
         return ((tokenEntry.isLiteral() && (tokenEntry.getStartWith().length() == 0 || tokenEntry.getEndsWith().length() == 0))
@@ -459,6 +512,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
         private String cookieName = "";
         private boolean logSet = false;
         private String value = null;
+        private Pattern regexPattern = null;
 
         public boolean isEnabled() {
             return enabled;
@@ -562,6 +616,14 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
 
         public void setValue(String value) {
             this.value = value;
+        }
+
+        public Pattern getRegexPattern() {
+            return regexPattern;
+        }
+
+        public void setRegexPattern(Pattern regexPattern) {
+            this.regexPattern = regexPattern;
         }
     }
 }

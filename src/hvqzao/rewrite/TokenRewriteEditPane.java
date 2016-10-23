@@ -144,9 +144,6 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
         buttonGroup1.add(isRegex);
         isRegex.setText("Regex match using parentheses:");
         isRegex.setActionCommand("Regex");
-        isRegex.setEnabled(false);
-
-        regexMatch.setEnabled(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
