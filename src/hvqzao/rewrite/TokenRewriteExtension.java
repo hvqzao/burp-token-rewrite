@@ -274,6 +274,33 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
     }
 
     //
+    // future use - issue specific json request using retrieved token and predefined key-value pairs
+    //
+    //private void issueJsonRequest(IHttpRequestResponse messageInfo, final String key, final String value) {
+    //    IHttpService service = messageInfo.getHttpService();
+    //    byte[] request = messageInfo.getRequest();
+    //    IRequestInfo requestInfo = helpers.analyzeRequest(messageInfo);
+    //    String requestString = helpers.bytesToString(request);
+    //
+    //    String[] headers = requestString.substring(0, requestInfo.getBodyOffset()).trim().split("\n");
+    //
+    //    int marker = headers[0].lastIndexOf(" ");
+    //    if (marker == -1) {
+    //        // this should not happen
+    //        return;
+    //    }
+    //    // modify url
+    //    headers[0] = headers[0].substring(0, marker) + "/appended" + headers[0].substring(marker);
+    //
+    //    // prepare key-value pair as json to append to request body
+    //    String extras = String.join(",",EXTRAS.entrySet().stream().map(e -> "\"" + e.getKey() + "\":\"" + e.getValue() + "\"\n").reduce((x, y) -> x + y).get().trim().split("\n"));
+    //    String body = "{\"" + key + "\":\"" + value + "\"," + extras + "}";
+    //
+    //    byte[] message = helpers.buildHttpMessage(Arrays.asList(headers), helpers.stringToBytes(body));
+    //    callbacks.makeHttpRequest(service, message);
+    //}
+    
+    //
     // misc
     //
     private boolean tokenEntrySearchDefined(TokenEntry tokenEntry) {
