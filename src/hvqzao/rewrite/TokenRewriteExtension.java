@@ -111,7 +111,11 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
             JButton optionsEditToken = optionsPane.getEditToken();
             callbacks.customizeUiComponent(optionsEditToken);
             optionsEditToken.addActionListener((e) -> {
-                TokenEntry tokenEntry = token.get(tokenTable.convertRowIndexToModel(tokenTable.getSelectedRow()));
+                int selected = tokenTable.getSelectedRow();
+                if (selected == - 1) {
+                    return;
+                }
+                TokenEntry tokenEntry = token.get(tokenTable.convertRowIndexToModel(selected));
                 if (showTokenDialog("Edit Token", tokenEntry)) {
                     int row = tokenTable.getSelectedRow();
                     tokenTableModel.fireTableRowsUpdated(row, row);
@@ -121,7 +125,11 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
             JButton optionsRemoveToken = optionsPane.getRemoveToken();
             callbacks.customizeUiComponent(optionsRemoveToken);
             optionsRemoveToken.addActionListener((e) -> {
-                TokenEntry tokenEntry = token.get(tokenTable.convertRowIndexToModel(tokenTable.getSelectedRow()));
+                int selected = tokenTable.getSelectedRow();
+                if (selected == - 1) {
+                    return;
+                }
+                TokenEntry tokenEntry = token.get(tokenTable.convertRowIndexToModel(selected));
                 int dialogResult = JOptionPane.showConfirmDialog(optionsPane, "Are you sure you want to remove it?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     int index = tokenTable.convertRowIndexToModel(tokenTable.getSelectedRow());
@@ -299,7 +307,6 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
     //    byte[] message = helpers.buildHttpMessage(Arrays.asList(headers), helpers.stringToBytes(body));
     //    callbacks.makeHttpRequest(service, message);
     //}
-    
     //
     // misc
     //
