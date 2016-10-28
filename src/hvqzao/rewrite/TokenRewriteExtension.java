@@ -307,6 +307,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
     //    byte[] message = helpers.buildHttpMessage(Arrays.asList(headers), helpers.stringToBytes(body));
     //    callbacks.makeHttpRequest(service, message);
     //}
+    
     //
     // misc
     //
@@ -325,7 +326,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
 
     private boolean showTokenDialog(String title, TokenEntry tokenEntry) {
         JDialog dialog = new JDialog(burpFrame, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        TokenRewriteDialogWrapper wrapper = new TokenRewriteDialogWrapper();
+        DialogWrapper wrapper = new DialogWrapper();
         TokenRewriteEditPane editPane = new TokenRewriteEditPane();
         // customize edit pane
         JButton editHelp = editPane.getEditHelp();
@@ -368,10 +369,16 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
         JCheckBox logSet = editPane.getLogSet();
         callbacks.customizeUiComponent(logSet);
         //
-        isLiteral.requestFocus();
+        JCheckBox issueRequest = editPane.getIssueRequest();
+        callbacks.customizeUiComponent(issueRequest);
+        //
+        JButton editRequest = editPane.getEditRequest();
+        callbacks.customizeUiComponent(editRequest);
+        //
+        //isLiteral.requestFocus();
         // wrap editPane
         wrapper.getScrollPane().getViewport().add(editPane);
-        dialog.setBounds(100, 100, 470, 470);
+        dialog.setBounds(100, 100, 470, 500);
         dialog.setContentPane(wrapper);
         //dialog.setLocationRelativeTo(burpFrame);
         //dialog.setLocationRelativeTo(optionsPane.getOptionsRewritePanel());

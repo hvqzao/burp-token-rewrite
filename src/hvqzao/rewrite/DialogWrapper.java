@@ -1,23 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package hvqzao.rewrite;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
-/**
- *
- * @author nme
- */
-public class TokenRewriteDialogWrapper extends javax.swing.JPanel {
+public class DialogWrapper extends javax.swing.JPanel {
 
     /**
      * Creates new form TokenRewriteEditWrapper
      */
-    public TokenRewriteDialogWrapper() {
+    public DialogWrapper() {
         initComponents();
     }
 
@@ -45,17 +36,22 @@ public class TokenRewriteDialogWrapper extends javax.swing.JPanel {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         scrollPane = new javax.swing.JScrollPane();
+        warningLabel = new javax.swing.JLabel();
 
         okButton.setText("OK");
 
         cancelButton.setText("Cancel");
+
+        warningLabel.setText("<html><i style='color:#e58900'></i></html>");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(244, Short.MAX_VALUE)
+                .addGap(53, 53, 53)
+                .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
                 .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
@@ -69,7 +65,8 @@ public class TokenRewriteDialogWrapper extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
-                    .addComponent(cancelButton))
+                    .addComponent(cancelButton)
+                    .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -79,5 +76,6 @@ public class TokenRewriteDialogWrapper extends javax.swing.JPanel {
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton okButton;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
 }
