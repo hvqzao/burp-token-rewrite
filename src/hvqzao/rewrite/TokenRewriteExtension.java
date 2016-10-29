@@ -375,6 +375,9 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
         JButton editRequest = editPane.getEditRequest();
         callbacks.customizeUiComponent(editRequest);
         //
+        JCheckBox reIssue = editPane.getReIssue();
+        callbacks.customizeUiComponent(reIssue);
+        //
         //isLiteral.requestFocus();
         // wrap editPane
         wrapper.getScrollPane().getViewport().add(editPane);

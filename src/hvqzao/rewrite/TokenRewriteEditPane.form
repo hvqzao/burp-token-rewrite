@@ -32,14 +32,14 @@
               <Component id="editHelp" min="-2" pref="24" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="logSet" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="reIssue" min="-2" max="-2" attributes="0"/>
                   <Component id="isLiteral" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="isInScope" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="scopeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
@@ -56,19 +56,22 @@
                               </Group>
                               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="logSet" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="isCookie" min="-2" max="-2" attributes="0"/>
                           <Component id="issueRequest" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="editRequest" min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="endsWith" min="-2" pref="135" max="-2" attributes="0"/>
-                              <Component id="cookieName" min="-2" pref="135" max="-2" attributes="0"/>
                               <Component id="requestParameter" min="-2" pref="135" max="-2" attributes="0"/>
                               <Component id="startWith" alignment="1" min="-2" pref="135" max="-2" attributes="0"/>
                           </Group>
                           <Component id="regexMatch" alignment="0" min="-2" pref="135" max="-2" attributes="0"/>
+                          <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                              <Component id="editRequest" min="-2" max="-2" attributes="0"/>
+                              <Component id="cookieName" alignment="0" min="-2" pref="135" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -122,17 +125,19 @@
                           <Component id="isRequestParameter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="requestParameter" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="isCookie" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cookieName" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
                   </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="reIssue" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="isCookie" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cookieName" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="issueRequest" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="editRequest" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="editRequest" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="logSet" min="-2" max="-2" attributes="0"/>
@@ -260,6 +265,12 @@
     <Component class="javax.swing.JButton" name="editRequest">
       <Properties>
         <Property name="text" type="java.lang.String" value="Edit request"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="reIssue">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="When parameter is present, re-issue request used to get token last time"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
