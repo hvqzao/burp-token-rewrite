@@ -9,6 +9,10 @@ Requires Java 8
 
 This extension _DOES NOT_ require Burp Suite Professional
 
+## Download
+
+https://github.com/hvqzao/burp-token-rewrite/releases/download/1.0/token-rewrite.jar
+
 ## License
 
 [MIT License](LICENSE)

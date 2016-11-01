@@ -149,6 +149,8 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
             optionsTokensTableSplitPane.setUI(new GlyphSplitPaneUI(optionsPane.getBackground())); // each need separate instance
             // add the custom tab to Burp's UI
             callbacks.addSuiteTab(TokenRewriteExtension.this);
+            // register ourselves as an HTTP listener
+            callbacks.registerHttpListener(TokenRewriteExtension.this);
             // get burp frame and tabbed pane handler
             burpFrame = (JFrame) SwingUtilities.getWindowAncestor(optionsTab);
             //
@@ -307,17 +309,16 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
     //    byte[] message = helpers.buildHttpMessage(Arrays.asList(headers), helpers.stringToBytes(body));
     //    callbacks.makeHttpRequest(service, message);
     //}
-    
     //
     // misc
     //
     private boolean tokenEntrySearchDefined(TokenEntry tokenEntry) {
-        return ((tokenEntry.isLiteral() && (tokenEntry.getStartWith().length() == 0 || tokenEntry.getEndsWith().length() == 0))
-                || (tokenEntry.isLiteral() == false && tokenEntry.getRegexMatch().length() == 0));
+        return ((tokenEntry.isLiteral() && (tokenEntry.getStartWith().length() != 0 && tokenEntry.getEndsWith().length() != 0))
+                || (tokenEntry.isLiteral() == false && tokenEntry.getRegexMatch().length() != 0));
     }
 
     private String tokenSearch(TokenEntry tokenEntry) {
-        if (tokenEntrySearchDefined(tokenEntry)) {
+        if (tokenEntrySearchDefined(tokenEntry) == false) {
             return "Undefined";
         } else {
             return tokenEntry.isLiteral() ? tokenEntry.getStartWith() + "[...]" + tokenEntry.getEndsWith() : tokenEntry.getRegexMatch();
