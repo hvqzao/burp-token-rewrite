@@ -169,7 +169,6 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
         editRequest.setEnabled(false);
 
         reIssue.setText("When parameter is present, re-issue request used to get token last time");
-        reIssue.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

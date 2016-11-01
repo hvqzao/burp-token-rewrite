@@ -271,7 +271,6 @@
     <Component class="javax.swing.JCheckBox" name="reIssue">
       <Properties>
         <Property name="text" type="java.lang.String" value="When parameter is present, re-issue request used to get token last time"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

@@ -203,6 +203,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
                             int length = responseString.substring(start).indexOf(END);
                             if (length > -1) {
                                 t.setValue(responseString.substring(start, start + length));
+                                t.setGotToken(messageInfo);
                                 found = true;
                             }
                         }
@@ -216,6 +217,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
                         Matcher m = p.matcher(responseString);
                         if (m.find()) {
                             t.setValue(m.group(1));
+                            t.setGotToken(messageInfo);
                             found = true;
                         }
                     }
@@ -263,10 +265,15 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
                     byte[] origRequest = messageInfo.getRequest();
                     //String requestString = helpers.bytesToString(request);
                     final String KEY = t.getParamName();
-                    final String VALUE = t.getValue();
                     IParameter origParameter = helpers.getRequestParameter(origRequest, KEY);
                     if (origParameter != null) {
-                        IParameter newParameter = helpers.buildParameter(KEY, VALUE, origParameter.getType());
+                        String value;
+                        value = t.getValue();
+                        if (t.isReIssue()) {
+                            callbacks.makeHttpRequest(messageInfo.getHttpService(), t.getGotToken().getRequest());
+                            value = t.getValue();
+                        }
+                        IParameter newParameter = helpers.buildParameter(KEY, value, origParameter.getType());
                         try {
                             byte[] newRequest = helpers.updateParameter(origRequest, newParameter);
                             messageInfo.setRequest(newRequest);
@@ -275,7 +282,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
                         }
                         if (t.getLogSet()) {
                             // log set parameter
-                            callbacks.printOutput("Parameter " + KEY + " set to: \"" + VALUE + "\"");
+                            callbacks.printOutput("Parameter " + KEY + " set to: \"" + value + "\"");
                         }
                     }
                 }
@@ -400,6 +407,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
             logGet.setSelected(tokenEntry.getLogGet());
             isRequestParameter.setSelected(tokenEntry.isUpdateParam());
             requestParameter.setText(tokenEntry.getParamName());
+            reIssue.setSelected(tokenEntry.isReIssue());
             isCookie.setSelected(tokenEntry.isUpdateCookie());
             cookieName.setText(tokenEntry.getCookieName());
             logSet.setSelected(tokenEntry.getLogSet());
@@ -423,6 +431,7 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
             modalResult.setLogGet(logGet.isSelected());
             modalResult.setUpdateParam(isRequestParameter.isSelected());
             modalResult.setParamName(requestParameter.getText());
+            modalResult.setReIssue(reIssue.isSelected());
             modalResult.setUpdateCookie(isCookie.isSelected());
             modalResult.setCookieName(cookieName.getText());
             modalResult.setLogSet(logSet.isSelected());
@@ -558,6 +567,8 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
         private boolean logSet = false;
         private String value = null;
         private Pattern regexPattern = null;
+        private boolean reIssue = false;
+        private IHttpRequestResponse gotToken = null;
 
         public boolean isEnabled() {
             return enabled;
@@ -669,6 +680,22 @@ public class TokenRewriteExtension implements IBurpExtender, ITab, IHttpListener
 
         public void setRegexPattern(Pattern regexPattern) {
             this.regexPattern = regexPattern;
+        }
+
+        public boolean isReIssue() {
+            return reIssue;
+        }
+
+        public void setReIssue(boolean reIssue) {
+            this.reIssue = reIssue;
+        }
+
+        public IHttpRequestResponse getGotToken() {
+            return gotToken;
+        }
+
+        public void setGotToken(IHttpRequestResponse gotToken) {
+            this.gotToken = gotToken;
         }
     }
 }
