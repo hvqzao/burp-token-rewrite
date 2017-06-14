@@ -282,6 +282,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
 
         public void setRegexMatch(String regexMatch) {
             this.regexMatch = regexMatch;
+            this.regexPattern = null;
         }
 
         public boolean getLogGet() {
