@@ -11,8 +11,12 @@ import burp.IParameter;
 import burp.IRequestInfo;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
@@ -228,6 +232,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         private boolean logGet = false;
         private boolean updateParam = false;
         private String paramName = "";
+        private boolean urlEncodeValue = false;
         private boolean updateCookie = false;
         private String cookieName = "";
         private boolean logSet = false;
@@ -303,6 +308,14 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
 
         public String getParamName() {
             return paramName;
+        }
+
+        public boolean isUrlEncodeValue() {
+            return urlEncodeValue;
+        }
+
+        public void setUrlEncodeValue(boolean urlEncodeValue) {
+            this.urlEncodeValue = urlEncodeValue;
         }
 
         public void setParamName(String paramName) {
@@ -463,16 +476,23 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
                             callbacks.makeHttpRequest(messageInfo.getHttpService(), t.getGotToken().getRequest());
                             value = t.getValue();
                         }
-                        IParameter newParameter = helpers.buildParameter(KEY, value, origParameter.getType());
+                        IParameter newParameter = null;
                         try {
-                            byte[] newRequest = helpers.updateParameter(origRequest, newParameter);
-                            messageInfo.setRequest(newRequest);
-                        } catch (Exception e) {
-                            e.printStackTrace(BurpExtender.getStderr());
+                            newParameter = helpers.buildParameter(KEY, t.urlEncodeValue ? URLEncoder.encode(value, "UTF-8") : value, origParameter.getType());
+                        } catch (UnsupportedEncodingException ex) {
+                            ex.printStackTrace(BurpExtender.getStderr());
                         }
-                        if (t.getLogSet()) {
-                            // log set parameter
-                            callbacks.printOutput("Parameter " + KEY + " set to: \"" + value + "\"");
+                        if (newParameter != null) {
+                            try {
+                                byte[] newRequest = helpers.updateParameter(origRequest, newParameter);
+                                messageInfo.setRequest(newRequest);
+                            } catch (Exception ex) {
+                                ex.printStackTrace(BurpExtender.getStderr());
+                            }
+                            if (t.getLogSet()) {
+                                // log set parameter
+                                callbacks.printOutput("Parameter " + KEY + " set to: \"" + value + "\"");
+                            }
                         }
                     }
                 }
@@ -559,6 +579,9 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         JTextField requestParameter = editPane.getRequestParameter();
         callbacks.customizeUiComponent(requestParameter);
         //
+        JCheckBox urlEncodeValue = editPane.getUrlEncodeValue();
+        callbacks.customizeUiComponent(urlEncodeValue);
+        //
         JCheckBox isCookie = editPane.getIsCookie();
         callbacks.customizeUiComponent(isCookie);
         //
@@ -597,6 +620,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
             logGet.setSelected(tokenEntry.getLogGet());
             isRequestParameter.setSelected(tokenEntry.isUpdateParam());
             requestParameter.setText(tokenEntry.getParamName());
+            urlEncodeValue.setSelected(tokenEntry.isUrlEncodeValue());
             reIssue.setSelected(tokenEntry.isReIssue());
             isCookie.setSelected(tokenEntry.isUpdateCookie());
             cookieName.setText(tokenEntry.getCookieName());
@@ -621,6 +645,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
             modalResult.setLogGet(logGet.isSelected());
             modalResult.setUpdateParam(isRequestParameter.isSelected());
             modalResult.setParamName(requestParameter.getText());
+            modalResult.setUrlEncodeValue(urlEncodeValue.isSelected());
             modalResult.setReIssue(reIssue.isSelected());
             modalResult.setUpdateCookie(isCookie.isSelected());
             modalResult.setCookieName(cookieName.getText());
