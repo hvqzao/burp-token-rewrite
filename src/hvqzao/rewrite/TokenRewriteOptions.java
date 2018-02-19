@@ -540,7 +540,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
                                         headers.add(KEY + ": " + VALUE);
                                         if (t.getLogSet()) {
                                             // log set parameter
-                                            callbacks.printOutput("Parameter " + KEY + " set to: \"" + VALUE + "\"");
+                                            callbacks.printOutput("Header " + KEY + " set to: \"" + VALUE + "\"");
                                         }
                                         break;
                                     }
