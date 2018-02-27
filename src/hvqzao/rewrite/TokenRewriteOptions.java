@@ -13,15 +13,9 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import static java.nio.file.Files.list;
 import java.util.ArrayList;
-import static java.util.Collections.list;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
@@ -213,19 +207,19 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         public int getPreferredWidth(int column) {
             switch (column) {
                 case 0:
-                    return 80;
+                    return 100;
                 case 1:
-                    return 70;
+                    return 100;
                 case 2:
-                    return 110;
+                    return 160;
                 case 3:
-                    return 110;
+                    return 160;
                 case 4:
-                    return 110;
+                    return 160;
                 case 5:
-                    return 180;
+                    return 200;
                 default:
-                    return 80;
+                    return 100;
             }
         }
 
@@ -322,7 +316,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         public String getParamName() {
             return paramName;
         }
-        
+
         public boolean isUpdateHeader() {
             return updateHeader;
         }
@@ -334,7 +328,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         public String getHeaderName() {
             return headerName;
         }
-        
+
         public void setHeaderName(String headerName) {
             this.headerName = headerName;
         }
@@ -524,40 +518,40 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
                             }
                         }
                     }
-                }else if (t.getValue() != null && t.isUpdateHeader()) {
+                } else if (t.getValue() != null && t.isUpdateHeader()) {
                     IRequestInfo originalRequestInfo = helpers.analyzeRequest(messageInfo);
                     List<String> headers = originalRequestInfo.getHeaders();
 
                     final String KEY = t.getHeaderName();
                     final String VALUE = t.getValue();
-                    
-                        if (KEY != null) {
-                            try{
-                                for (String header: headers) {
-                                    if(header.matches(KEY+".*")){
-                                        headers.remove(header);
-                                        //headers.remove(headerIndex);
-                                        headers.add(KEY + ": " + VALUE);
-                                        if (t.getLogSet()) {
-                                            // log set parameter
-                                            callbacks.printOutput("Header " + KEY + " set to: \"" + VALUE + "\"");
-                                        }
-                                        break;
+
+                    if (KEY != null) {
+                        try {
+                            for (String header : headers) {
+                                if (header.matches(KEY + ".*")) {
+                                    headers.remove(header);
+                                    //headers.remove(headerIndex);
+                                    headers.add(KEY + ": " + VALUE);
+                                    if (t.getLogSet()) {
+                                        // log set parameter
+                                        callbacks.printOutput("Header " + KEY + " set to: \"" + VALUE + "\"");
                                     }
+                                    break;
                                 }
-                            }catch(Exception ex){
-                                ex.printStackTrace(BurpExtender.getStderr());
                             }
+                        } catch (Exception ex) {
+                            ex.printStackTrace(BurpExtender.getStderr());
                         }
+                    }
 
                     byte[] request = helpers.buildHttpMessage(headers, substring(messageInfo.getRequest(), originalRequestInfo.getBodyOffset()));
 
                     messageInfo.setRequest(request);
-               }
+                }
             }
         });
     }
-    
+
     //
     private byte[] substring(byte[] array, int from) {
         int len = array.length - from;
@@ -674,7 +668,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         //isLiteral.requestFocus();
         // wrap editPane
         wrapper.getScrollPane().getViewport().add(editPane);
-        dialog.setBounds(100, 100, 470, 500);
+        dialog.setBounds(100, 100, 500, 530);
         dialog.setContentPane(wrapper);
         //dialog.setLocationRelativeTo(burpFrame);
         //dialog.setLocationRelativeTo(optionsPane.getOptionsRewritePanel());
@@ -777,7 +771,7 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
         optionsDefaults.setMinimumSize(new java.awt.Dimension(24, 24));
         optionsDefaults.setPreferredSize(new java.awt.Dimension(24, 24));
 
-        optionsRewriteTitle.setText("<html><b style='color:#e58900;font-size:10px'>Token Rewrite</b></html>");
+        optionsRewriteTitle.setText("<html><b style='color:#ff6633;font-size:10px'>Token Rewrite</b></html>");
 
         optionsRewriteDescription.setText("<html>This extension allows you to get arbitrary value from responses and inject them into future requests. Those can be CSRF tokens, one-time codes etc.</html>");
 
@@ -787,14 +781,14 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
 
         removeToken.setText("Remove");
 
-        tokensTableSplitPane.setDividerLocation(400);
+        tokensTableSplitPane.setDividerLocation(570);
         tokensTableSplitPane.setDividerSize(10);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 696, Short.MAX_VALUE)
+            .addGap(0, 174, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -826,16 +820,15 @@ public class TokenRewriteOptions extends JPanel implements IHttpListener {
                 .addComponent(optionsRewriteTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(optionsRewritePanelLayout.createSequentialGroup()
-                .addGroup(optionsRewritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(optionsRewriteDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
-                    .addGroup(optionsRewritePanelLayout.createSequentialGroup()
-                        .addGroup(optionsRewritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(removeToken, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(editToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addComponent(tokensTableSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addComponent(optionsRewriteDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(optionsRewritePanelLayout.createSequentialGroup()
+                .addGroup(optionsRewritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(removeToken, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addToken, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tokensTableSplitPane))
         );
         optionsRewritePanelLayout.setVerticalGroup(
             optionsRewritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

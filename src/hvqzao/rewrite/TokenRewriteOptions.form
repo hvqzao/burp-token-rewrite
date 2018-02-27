@@ -95,19 +95,17 @@
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="optionsRewriteDescription" pref="836" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="removeToken" min="-2" pref="85" max="-2" attributes="0"/>
-                              <Component id="editToken" alignment="0" max="32767" attributes="0"/>
-                              <Component id="addToken" alignment="0" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="tokensTableSplitPane" pref="0" max="32767" attributes="0"/>
-                      </Group>
+                  <Component id="optionsRewriteDescription" pref="836" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="removeToken" min="-2" pref="85" max="-2" attributes="0"/>
+                      <Component id="editToken" alignment="0" max="32767" attributes="0"/>
+                      <Component id="addToken" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="tokensTableSplitPane" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -135,7 +133,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="optionsRewriteTitle">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b style=&apos;color:#e58900;font-size:10px&apos;&gt;Token Rewrite&lt;/b&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b style=&apos;color:#ff6633;font-size:10px&apos;&gt;Token Rewrite&lt;/b&gt;&lt;/html&gt;"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="optionsRewriteDescription">
@@ -160,7 +158,7 @@
         </Component>
         <Container class="javax.swing.JSplitPane" name="tokensTableSplitPane">
           <Properties>
-            <Property name="dividerLocation" type="int" value="400"/>
+            <Property name="dividerLocation" type="int" value="570"/>
             <Property name="dividerSize" type="int" value="10"/>
           </Properties>
 
@@ -176,7 +174,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="696" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="174" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">

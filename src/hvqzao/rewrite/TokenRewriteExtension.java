@@ -1,4 +1,6 @@
-// Token Rewrite Burp Extension, (c) 2016-2017 Marcin Woloszyn (@hvqzao), Released under MIT license
+// Token Rewrite Burp Extension, (c) 2016-2018 Marcin Woloszyn (@hvqzao), Released under MIT license
+// Contributors: Eduardo Garcia
+//
 package hvqzao.rewrite;
 
 import burp.IBurpExtender;

@@ -7,7 +7,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 class GlyphSplitPaneUI extends BasicSplitPaneUI {
 
-    private final Color ORANGE_COLOR = new Color(230, 138, 0);
+    private final Color ORANGE_COLOR = new Color(255, 102, 51);
     private final Color backgroundColor;
 
     public GlyphSplitPaneUI(Color backgroundColor) {
