@@ -66,6 +66,14 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
     public JTextField getRequestParameter() {
         return requestParameter;
     }
+    
+    public JCheckBox getIsRequestHeader() {
+        return isRequestHeader;
+    }
+
+    public JTextField getRequestHeader() {
+        return requestHeader;
+    }
 
     public JCheckBox getUrlEncodeValue() {
         return urlEncodeValue;
@@ -120,8 +128,11 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
         editRequest = new javax.swing.JButton();
         reIssue = new javax.swing.JCheckBox();
         urlEncodeValue = new javax.swing.JCheckBox();
+        requestHeader = new javax.swing.JTextField();
+        isRequestHeader = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setPreferredSize(getPreferredSize());
 
         editHelp.setMargin(new java.awt.Insets(0, 0, 0, 0));
         editHelp.setMaximumSize(new java.awt.Dimension(24, 24));
@@ -149,7 +160,6 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
         logSet.setText("Log update to extension output");
 
         buttonGroup1.add(isLiteral);
-        isLiteral.setSelected(true);
         isLiteral.setText("Literal");
 
         buttonGroup1.add(isRegex);
@@ -160,11 +170,11 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 9, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 155, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         issueRequest.setText("Issue specific request:");
@@ -177,29 +187,18 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
 
         urlEncodeValue.setText("Url encode value");
 
+        isRequestHeader.setText("Update future requests Headers:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(reIssue)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(logSet)
-                            .addComponent(isCookie)
-                            .addComponent(issueRequest))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(editRequest)
-                            .addComponent(cookieName, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(editHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(reIssue)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addComponent(urlEncodeValue))
@@ -209,25 +208,41 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
                     .addComponent(scopeLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(43, 43, 43)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2))
-                                .addGap(26, 26, 26))
-                            .addComponent(isRequestParameter)
-                            .addComponent(jLabel6)
-                            .addComponent(logGet)
-                            .addComponent(isRegex))
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGap(43, 43, 43)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel3)
+                                            .addComponent(jLabel2))
+                                        .addGap(26, 26, 26))
+                                    .addComponent(isRequestParameter)
+                                    .addComponent(jLabel6)
+                                    .addComponent(logGet)
+                                    .addComponent(isRegex))
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(isRequestHeader))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(requestHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(endsWith, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(requestParameter, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(startWith, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(regexMatch, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(12, Short.MAX_VALUE))
+                            .addComponent(regexMatch, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(isCookie)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(logSet)
+                                    .addComponent(issueRequest))))
+                        .addGap(23, 23, 23)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cookieName, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(editRequest))))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,7 +285,11 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
                             .addComponent(requestParameter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(urlEncodeValue)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(requestHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(isRequestHeader))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reIssue)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -282,7 +301,7 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
                     .addComponent(editRequest))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logSet)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -297,6 +316,7 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
     private javax.swing.JCheckBox isInScope;
     private javax.swing.JRadioButton isLiteral;
     private javax.swing.JRadioButton isRegex;
+    private javax.swing.JCheckBox isRequestHeader;
     private javax.swing.JCheckBox isRequestParameter;
     private javax.swing.JCheckBox issueRequest;
     private javax.swing.JLabel jLabel2;
@@ -308,6 +328,7 @@ public class TokenRewriteEditPane extends javax.swing.JPanel {
     private javax.swing.JCheckBox logSet;
     private javax.swing.JCheckBox reIssue;
     private javax.swing.JTextField regexMatch;
+    private javax.swing.JTextField requestHeader;
     private javax.swing.JTextField requestParameter;
     private javax.swing.JLabel scopeLabel;
     private javax.swing.JTextField startWith;
